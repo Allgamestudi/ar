@@ -58,3 +58,6 @@ h2 {
 .nohide {
   display : block;
 }
+.mirrorX {
+  transform: scale(-1, 1)
+}

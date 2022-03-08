@@ -8,7 +8,9 @@ var bird = new Image();
 var pipeUp = new Image(); // Создание объекта
 var pipeBottom = new Image();
 var gap = 90;
+var score = 0;
 var pipe = []
+var p = 20
 pipe[0] = {
   x : overlay.width,
   y : -80
@@ -118,7 +120,7 @@ pipeUp.src = "textures/pipeUp.png"; // Аналогично
 pipeBottom.src = "textures/pipeBottom.png";
 function drawLoop() {
   bird.src = "textures/bird.png";
-  ;
+
   requestAnimFrame(drawLoop);
   overlayCC.clearRect(0, 0, vid_width, vid_height);
 
@@ -127,8 +129,8 @@ function drawLoop() {
     var positions = ctrack.getCurrentPosition();
     var pupilLeft = positions[37]
     for(var i = 0; i < pipe.length; i++) {
-      overlayCC.drawImage(pipeUp, pipe[i].x, pipe[i].y);
-      overlayCC.drawImage(pipeBottom, pipe[i].x, pipe[i].y + pipeUp.height + gap);
+      overlayCC.drawImage(pipeUp, pipe[i].x + p, pipe[i].y);
+      overlayCC.drawImage(pipeBottom, pipe[i].x + p, pipe[i].y + pipeUp.height + gap);
       pipe[i].x--;
 
       if(pipe[i].x == 125){
@@ -141,15 +143,23 @@ function drawLoop() {
           (pupilLeft[1] <= pipe[i].y + pipeUp.height || pupilLeft[1] + bird.height >= pipe[i].y + pipeUp.height + gap)){
         location.reload();
       }
+      if(pipe[i].x == 180){
+
+        score++;
+      }
     }
 
 
+
     // draw circles over eyes
-    overlayCC.fillStyle = "#00FFFF";
+    overlayCC.fillStyle = "#000";
+
     overlayCC.beginPath();
     overlayCC.drawImage(bird ,pupilLeft[0] - 17, pupilLeft[1] - 17);
 
     overlayCC.closePath();
     overlayCC.fill();
+    overlayCC.font = "24px Verdana";
+    overlayCC.fillText( "Счет: " + score, 10, overlay.height - 20);
   }
 }
