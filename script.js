@@ -2,11 +2,17 @@ var vid = document.getElementById("videoel");
 var vid_width = vid.width;
 var vid_height = vid.height;
 var overlay = document.getElementById("overlay");
+
 var overlayCC = overlay.getContext("2d");
 var bird = new Image();
 var pipeUp = new Image(); // Создание объекта
 var pipeBottom = new Image();
 var gap = 90;
+var pipe = []
+pipe[0] = {
+  x : overlay.width,
+  y : -80
+}
 
 
 /*********** Setup of video/webcam and checking for webGL support *********/
@@ -107,19 +113,36 @@ function startVideo() {
   // start loop to draw face
   drawLoop();
 }
+
 pipeUp.src = "textures/pipeUp.png"; // Аналогично
 pipeBottom.src = "textures/pipeBottom.png";
 function drawLoop() {
-  bird.src = "textures/pixil-frame-0 (2).png";
-  ctx.drawImage(pipeUp, 100, 0);
-  ctx.drawImage(pipeBottom, 100, 0, pipeUp.height + gap)
+  bird.src = "textures/bird.png";
+  ;
   requestAnimFrame(drawLoop);
   overlayCC.clearRect(0, 0, vid_width, vid_height);
+
   if (ctrack.getCurrentPosition()) {
     // get points
     var positions = ctrack.getCurrentPosition();
+    var pupilLeft = positions[37]
+    for(var i = 0; i < pipe.length; i++) {
+      overlayCC.drawImage(pipeUp, pipe[i].x, pipe[i].y);
+      overlayCC.drawImage(pipeBottom, pipe[i].x, pipe[i].y + pipeUp.height + gap);
+      pipe[i].x--;
 
-    var pupilLeft = positions[37];
+      if(pipe[i].x == 125){
+        pipe.push({
+          x : overlay.width,
+          y : Math.floor((Math.random() * pipeUp.height) - pipeUp.height)
+        })
+      }
+      if(pupilLeft[0] + bird.width >= pipe[i].x && pupilLeft[0] <= pipe[i].x + pipeUp.width &&
+          (pupilLeft[1] <= pipe[i].y + pipeUp.height || pupilLeft[1] + bird.height >= pipe[i].y + pipeUp.height + gap)){
+        location.reload();
+      }
+    }
+
 
     // draw circles over eyes
     overlayCC.fillStyle = "#00FFFF";
